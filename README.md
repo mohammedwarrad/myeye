@@ -71,3 +71,21 @@ python -m http.server 8080
 ```text
 http://localhost:8080
 ```
+
+
+## Opdatering: Rigtige kamerafunktioner
+
+Denne version indeholder nu:
+
+- Foto via telefonens indbyggede kamera
+- Video via telefonens indbyggede videooptagelse
+- Dokumentoptagelse med efterfølgende billedforbedring
+- Portræt via frontkamera, når telefonen understøtter det
+- Automatisk retur til MyEye efter optagelse
+- Forhåndsvisning af seneste optagelse
+- Gem i galleri
+- Favoritmarkering
+- Download og sletning
+- Avanceret browserkamera som sekundær mulighed
+
+På Android åbner knapperne normalt telefonens egen kamera-app via `capture`-funktionen.

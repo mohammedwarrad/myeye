@@ -107,39 +107,106 @@
         </div>
       </section>
 
+
       <section id="view-camera" class="view">
-        <div class="page-head"><div><span class="eyebrow">KAMERA</span><h1>Tag billeder og video</h1></div></div>
-        <div class="camera-layout">
-          <div class="camera-stage">
-            <video id="cameraVideo" playsinline autoplay muted></video>
-            <canvas id="captureCanvas" hidden></canvas>
-            <div id="cameraPlaceholder" class="camera-placeholder">
-              <div class="big-camera">◉</div>
-              <h2>Kameraet er ikke startet</h2>
-              <p>Giv adgang til kameraet for at tage billeder direkte.</p>
-              <button id="startCamera" class="primary-btn">Start kamera</button>
-            </div>
-            <div class="camera-overlay">
-              <div class="grid-lines"></div>
-            </div>
-          </div>
-          <div class="camera-controls">
-            <div class="mode-tabs">
-              <button class="active">Foto</button><button>Video</button><button>Dokument</button><button>Portræt</button>
-            </div>
-            <div class="control-row">
-              <button id="switchCamera" class="round-control" title="Skift kamera">⟳</button>
-              <button id="captureBtn" class="shutter" title="Tag billede"><i></i></button>
-              <button id="stopCamera" class="round-control" title="Stop kamera">■</button>
-            </div>
-            <div class="camera-options">
-              <label>Blitz <select><option>Automatisk</option><option>Til</option><option>Fra</option></select></label>
-              <label>Format <select><option>4:3</option><option>16:9</option><option>1:1</option></select></label>
-              <label>Kvalitet <select><option>Høj</option><option>Standard</option></select></label>
-            </div>
+        <div class="page-head">
+          <div>
+            <span class="eyebrow">KAMERA</span>
+            <h1>Åbn telefonens rigtige kamera</h1>
+            <p class="page-intro">MyEye bruger telefonens indbyggede kamera, så zoom, blitz, fokus og billedkvalitet håndteres af din egen kamera-app.</p>
           </div>
         </div>
+
+        <div class="native-camera-layout">
+          <article class="native-camera-card">
+            <div class="native-camera-visual">
+              <div class="native-lens">
+                <div class="native-lens-inner"></div>
+              </div>
+              <span>MyEye Kamera</span>
+            </div>
+
+            <div class="native-mode-grid">
+              <button id="nativePhotoBtn" class="native-mode active">
+                <span>◉</span>
+                <strong>Foto</strong>
+                <small>Åbn telefonens kamera</small>
+              </button>
+              <button id="nativeVideoBtn" class="native-mode">
+                <span>▶</span>
+                <strong>Video</strong>
+                <small>Åbn videooptagelse</small>
+              </button>
+              <button id="nativeDocumentBtn" class="native-mode">
+                <span>▤</span>
+                <strong>Dokument</strong>
+                <small>Fotografér et dokument</small>
+              </button>
+              <button id="nativePortraitBtn" class="native-mode">
+                <span>◯</span>
+                <strong>Portræt</strong>
+                <small>Tag et portrætbillede</small>
+              </button>
+            </div>
+
+            <button id="nativeShutterBtn" class="native-shutter" aria-label="Åbn kamera">
+              <i></i>
+            </button>
+
+            <div class="native-camera-note">
+              <strong>Sådan virker det</strong>
+              <p>Tryk på en funktion. Telefonens egen kamera-app åbner. Når du har taget billedet eller videoen, returneres filen automatisk til MyEye.</p>
+            </div>
+          </article>
+
+          <article class="capture-result panel">
+            <div class="panel-head">
+              <h3>Seneste optagelse</h3>
+              <button id="clearCapturePreview" class="text-btn hidden">Ryd</button>
+            </div>
+
+            <div id="capturePreview" class="capture-preview empty-state">
+              Intet billede eller video er taget endnu.
+            </div>
+
+            <div id="captureActions" class="capture-actions hidden">
+              <button id="captureFavorite" class="ghost-btn">♡ Favorit</button>
+              <button id="captureGallery" class="ghost-btn">Se i galleri</button>
+              <button id="captureDownload" class="ghost-btn">Hent fil</button>
+              <button id="captureDelete" class="danger-btn">Slet</button>
+            </div>
+          </article>
+        </div>
+
+        <details class="advanced-camera panel">
+          <summary>Avanceret MyEye-kamera i browseren</summary>
+          <p>Brug kun denne funktion, hvis du ønsker kameraet inde i MyEye. Telefonens indbyggede kamera anbefales normalt.</p>
+
+          <div class="camera-layout">
+            <div class="camera-stage">
+              <video id="cameraVideo" playsinline autoplay muted></video>
+              <canvas id="captureCanvas" hidden></canvas>
+              <div id="cameraPlaceholder" class="camera-placeholder">
+                <div class="big-camera">◉</div>
+                <h2>Kameraet er ikke startet</h2>
+                <p>Giv adgang til kameraet for at bruge kameraet inde i MyEye.</p>
+                <button id="startCamera" class="primary-btn">Start MyEye-kamera</button>
+              </div>
+              <div class="camera-overlay"><div class="grid-lines"></div></div>
+            </div>
+
+            <div class="camera-controls">
+              <div class="control-row">
+                <button id="switchCamera" class="round-control" title="Skift kamera">⟳</button>
+                <button id="captureBtn" class="shutter" title="Tag billede"><i></i></button>
+                <button id="stopCamera" class="round-control" title="Stop kamera">■</button>
+              </div>
+              <p class="camera-help">Kameraskift og billedoptagelse afhænger af browserens understøttelse.</p>
+            </div>
+          </div>
+        </details>
       </section>
+
 
       <section id="view-gallery" class="view">
         <div class="page-head">
@@ -238,6 +305,12 @@
   </div>
 
   <input id="fileInput" type="file" accept="image/*,video/*" multiple hidden>
+
+  <input id="nativePhotoInput" type="file" accept="image/*" capture="environment" hidden>
+  <input id="nativeVideoInput" type="file" accept="video/*" capture="environment" hidden>
+  <input id="nativeDocumentInput" type="file" accept="image/*" capture="environment" hidden>
+  <input id="nativePortraitInput" type="file" accept="image/*" capture="user" hidden>
+
 
   <dialog id="mediaDialog" class="modal">
     <button class="modal-close" data-close>×</button>

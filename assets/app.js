@@ -173,4 +173,197 @@ window.addEventListener('beforeinstallprompt',e=>{e.preventDefault();deferredPro
 $('#installBtn').addEventListener('click',async()=>{if(!deferredPrompt)return;deferredPrompt.prompt();await deferredPrompt.userChoice;deferredPrompt=null;$('#installBtn').classList.add('hidden')});
 if('serviceWorker' in navigator) navigator.serviceWorker.register('service-worker.js').catch(()=>{});
 
+
+
+// ===== Telefonens indbyggede kamera og video =====
+let latestCaptureId = null;
+let selectedNativeMode = 'photo';
+
+const nativeModeMap = {
+  photo: { input: '#nativePhotoInput', label: 'Foto' },
+  video: { input: '#nativeVideoInput', label: 'Video' },
+  document: { input: '#nativeDocumentInput', label: 'Dokument' },
+  portrait: { input: '#nativePortraitInput', label: 'Portræt' }
+};
+
+function selectNativeMode(mode){
+  selectedNativeMode = mode;
+  $$('.native-mode').forEach(btn => btn.classList.remove('active'));
+  const selected = {
+    photo: '#nativePhotoBtn',
+    video: '#nativeVideoBtn',
+    document: '#nativeDocumentBtn',
+    portrait: '#nativePortraitBtn'
+  }[mode];
+  $(selected)?.classList.add('active');
+}
+
+function openNativeCapture(mode = selectedNativeMode){
+  selectNativeMode(mode);
+  const target = nativeModeMap[mode];
+  if(!target) return;
+  $(target.input).click();
+}
+
+$('#nativePhotoBtn')?.addEventListener('click', () => openNativeCapture('photo'));
+$('#nativeVideoBtn')?.addEventListener('click', () => openNativeCapture('video'));
+$('#nativeDocumentBtn')?.addEventListener('click', () => openNativeCapture('document'));
+$('#nativePortraitBtn')?.addEventListener('click', () => openNativeCapture('portrait'));
+$('#nativeShutterBtn')?.addEventListener('click', () => openNativeCapture(selectedNativeMode));
+
+async function compressCapturedImage(file, mode){
+  const raw = await readFile(file);
+  return await new Promise(resolve => {
+    const img = new Image();
+    img.onload = () => {
+      const maxSide = mode === 'document' ? 2200 : 1800;
+      let {width, height} = img;
+      const scale = Math.min(1, maxSide / Math.max(width, height));
+      width = Math.max(1, Math.round(width * scale));
+      height = Math.max(1, Math.round(height * scale));
+
+      const canvas = document.createElement('canvas');
+      canvas.width = width;
+      canvas.height = height;
+      const ctx = canvas.getContext('2d');
+
+      if(mode === 'document'){
+        ctx.filter = 'contrast(1.12) saturate(.82)';
+      }
+      ctx.drawImage(img, 0, 0, width, height);
+      resolve(canvas.toDataURL('image/jpeg', mode === 'document' ? .9 : .86));
+    };
+    img.onerror = () => resolve(raw);
+    img.src = raw;
+  });
+}
+
+async function handleNativeCapture(file, mode){
+  if(!file) return;
+
+  const isVideo = file.type.startsWith('video');
+  let data;
+
+  if(isVideo){
+    if(file.size > 18 * 1024 * 1024){
+      toast('Videoen er for stor til denne webversion. Vælg en kortere video.');
+      return;
+    }
+    data = await readFile(file);
+  }else{
+    data = await compressCapturedImage(file, mode);
+  }
+
+  const prefix = {
+    photo: 'MYEYE_FOTO',
+    video: 'MYEYE_VIDEO',
+    document: 'MYEYE_DOKUMENT',
+    portrait: 'MYEYE_PORTRAET'
+  }[mode] || 'MYEYE';
+
+  const ext = isVideo ? (file.name.split('.').pop() || 'mp4') : 'jpg';
+  const item = {
+    id: id(),
+    name: `${prefix}_${new Date().toISOString().replace(/[:.]/g,'-')}.${ext}`,
+    type: isVideo ? file.type : 'image/jpeg',
+    size: isVideo ? file.size : data.length,
+    created: Date.now(),
+    favorite: false,
+    category: mode,
+    data
+  };
+
+  try{
+    state.media.push(item);
+    save();
+  }catch(error){
+    state.media = state.media.filter(x => x.id !== item.id);
+    toast('Filen kunne ikke gemmes lokalt. Den kan være for stor.');
+    return;
+  }
+
+  latestCaptureId = item.id;
+  renderCapturePreview();
+  renderRecent();
+  renderGallery();
+  toast(`${nativeModeMap[mode].label} er gemt i MyEye`);
+}
+
+[
+  ['#nativePhotoInput','photo'],
+  ['#nativeVideoInput','video'],
+  ['#nativeDocumentInput','document'],
+  ['#nativePortraitInput','portrait']
+].forEach(([selector, mode]) => {
+  $(selector)?.addEventListener('change', async event => {
+    const file = event.target.files?.[0];
+    event.target.value = '';
+    await handleNativeCapture(file, mode);
+  });
+});
+
+function renderCapturePreview(){
+  const box = $('#capturePreview');
+  const actions = $('#captureActions');
+  const clearBtn = $('#clearCapturePreview');
+  const item = state.media.find(x => x.id === latestCaptureId);
+
+  if(!item){
+    box.className = 'capture-preview empty-state';
+    box.textContent = 'Intet billede eller video er taget endnu.';
+    actions?.classList.add('hidden');
+    clearBtn?.classList.add('hidden');
+    return;
+  }
+
+  box.className = 'capture-preview';
+  box.innerHTML = item.type.startsWith('video')
+    ? `<video src="${item.data}" controls playsinline></video>`
+    : `<img src="${item.data}" alt="${escapeHtml(item.name)}">`;
+
+  actions?.classList.remove('hidden');
+  clearBtn?.classList.remove('hidden');
+  $('#captureFavorite').textContent = item.favorite ? '♥ Fjern favorit' : '♡ Favorit';
+}
+
+$('#clearCapturePreview')?.addEventListener('click', () => {
+  latestCaptureId = null;
+  renderCapturePreview();
+});
+
+$('#captureFavorite')?.addEventListener('click', () => {
+  if(!latestCaptureId) return;
+  toggleFavorite(latestCaptureId);
+  renderCapturePreview();
+});
+
+$('#captureGallery')?.addEventListener('click', () => showView('gallery'));
+
+$('#captureDownload')?.addEventListener('click', () => {
+  const item = state.media.find(x => x.id === latestCaptureId);
+  if(!item) return;
+  const link = document.createElement('a');
+  link.href = item.data;
+  link.download = item.name;
+  link.click();
+});
+
+$('#captureDelete')?.addEventListener('click', () => {
+  if(!latestCaptureId || !confirm('Vil du slette den seneste optagelse?')) return;
+  state.media = state.media.filter(x => x.id !== latestCaptureId);
+  latestCaptureId = null;
+  save();
+  renderCapturePreview();
+  renderRecent();
+  renderGallery();
+  renderFavorites();
+  toast('Optagelsen er slettet');
+});
+
+// Hovedknapper til kamera åbner nu telefonens rigtige kamera på mobil
+$$('[data-view="camera"]').forEach(button => {
+  if(button.id === 'menuToggle') return;
+});
+renderCapturePreview();
+
 renderRecent();renderGallery();renderFavorites();renderAlbums();updateStorage();
