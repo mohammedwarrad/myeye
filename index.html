@@ -1,0 +1,269 @@
+<!doctype html>
+<html lang="da">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#071226">
+  <meta name="description" content="MyEye – kamera, billeder, video, galleri, album, steder, favoritter og sikker deling samlet i én visuel platform.">
+  <title>MyEye – Kamera og billedplatform</title>
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="stylesheet" href="assets/app.css">
+</head>
+<body>
+  <div id="app" class="app-shell">
+    <aside class="sidebar" aria-label="Hovednavigation">
+      <div class="brand">
+        <div class="brand-mark">M</div>
+        <div>
+          <strong>MyEye</strong>
+          <span>Fang. Organisér. Del.</span>
+        </div>
+      </div>
+
+      <nav class="nav-list">
+        <button class="nav-item active" data-view="home"><span>⌂</span> Hjem</button>
+        <button class="nav-item" data-view="camera"><span>◉</span> Kamera</button>
+        <button class="nav-item" data-view="gallery"><span>▧</span> Galleri</button>
+        <button class="nav-item" data-view="albums"><span>▣</span> Album</button>
+        <button class="nav-item" data-view="places"><span>⌖</span> Steder</button>
+        <button class="nav-item" data-view="favorites"><span>♡</span> Favoritter</button>
+        <button class="nav-item" data-view="share"><span>⇧</span> Deling</button>
+        <button class="nav-item" data-view="settings"><span>⚙</span> Indstillinger</button>
+      </nav>
+
+      <div class="storage-card">
+        <div class="storage-row"><span>Lagerplads</span><strong id="storageLabel">0 MB</strong></div>
+        <div class="progress"><i id="storageBar"></i></div>
+        <small>Lokalt på denne enhed</small>
+      </div>
+    </aside>
+
+    <main class="main">
+      <header class="topbar">
+        <button id="menuToggle" class="icon-btn mobile-only" aria-label="Åbn menu">☰</button>
+        <div class="search-wrap">
+          <span>⌕</span>
+          <input id="globalSearch" type="search" placeholder="Søg i billeder, album og steder…">
+        </div>
+        <div class="top-actions">
+          <button id="installBtn" class="ghost-btn hidden">Installér app</button>
+          <button id="quickUpload" class="primary-btn">＋ Tilføj</button>
+          <button class="avatar" data-view="settings" aria-label="Profil">MW</button>
+        </div>
+      </header>
+
+      <section id="view-home" class="view active">
+        <div class="hero">
+          <div class="hero-copy">
+            <span class="eyebrow">DIT VISUELLE ARBEJDSRUM</span>
+            <h1>Fang øjeblikket.<br><em>Skab overblikket.</em></h1>
+            <p>Tag billeder, optag video, organisér album, find steder og del sikkert – samlet i én platform.</p>
+            <div class="hero-actions">
+              <button class="primary-btn" data-view="camera">Åbn kamera</button>
+              <button class="ghost-btn" data-view="gallery">Se galleri</button>
+            </div>
+          </div>
+
+          <div class="orbit-wrap" aria-label="Visuel hovedmenu">
+            <div class="orbit">
+              <button class="orbit-item o1 cyan" data-view="camera"><b>◉</b><span>Kamera</span></button>
+              <button class="orbit-item o2 green" data-view="gallery"><b>▧</b><span>Galleri</span></button>
+              <button class="orbit-item o3 orange" data-view="places"><b>⌖</b><span>Steder</span></button>
+              <button class="orbit-item o4 pink" data-view="albums"><b>▣</b><span>Album</span></button>
+              <button class="orbit-item o5 rose" data-view="favorites"><b>♡</b><span>Favoritter</span></button>
+              <button class="orbit-item o6 blue" data-view="gallery"><b>▶</b><span>Video</span></button>
+              <button class="orbit-item o7 teal" data-view="gallery"><b>≛</b><span>Filtre</span></button>
+              <button class="orbit-item o8 purple" data-view="camera"><b>⌕</b><span>Zoom</span></button>
+              <div class="lens">
+                <div class="lens-ring"><div class="lens-core"></div></div>
+                <strong>MyEye</strong>
+                <span>Kamera & billeder</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="section-head">
+          <div><span class="eyebrow">HURTIG ADGANG</span><h2>Arbejd videre</h2></div>
+        </div>
+        <div class="quick-grid">
+          <button class="feature-card" data-view="camera"><span class="feature-icon cyan">◉</span><div><strong>Tag et billede</strong><small>Åbn kameraet med det samme</small></div></button>
+          <button class="feature-card" id="homeUpload"><span class="feature-icon purple">⇧</span><div><strong>Upload filer</strong><small>Tilføj billeder og videoer</small></div></button>
+          <button class="feature-card" data-view="albums"><span class="feature-icon pink">▣</span><div><strong>Opret album</strong><small>Saml billeder efter emne</small></div></button>
+          <button class="feature-card" data-view="share"><span class="feature-icon green">↗</span><div><strong>Del sikkert</strong><small>Opret et kontrolleret delingslink</small></div></button>
+        </div>
+
+        <div class="dashboard-grid">
+          <article class="panel">
+            <div class="panel-head"><h3>Seneste billeder</h3><button class="text-btn" data-view="gallery">Se alle</button></div>
+            <div id="recentGrid" class="media-grid compact empty-state">Ingen billeder endnu</div>
+          </article>
+          <article class="panel status-panel">
+            <div class="panel-head"><h3>Status</h3></div>
+            <div class="status-row"><span class="status-icon ok">✓</span><div><strong>System klar</strong><small>Alle funktioner er tilgængelige</small></div></div>
+            <div class="status-row"><span class="status-icon">☁</span><div><strong>Lokal lagring</strong><small>Dine filer gemmes i browseren</small></div></div>
+            <div class="status-row"><span class="status-icon">🔒</span><div><strong>Privat som standard</strong><small>Intet deles uden din handling</small></div></div>
+          </article>
+        </div>
+      </section>
+
+      <section id="view-camera" class="view">
+        <div class="page-head"><div><span class="eyebrow">KAMERA</span><h1>Tag billeder og video</h1></div></div>
+        <div class="camera-layout">
+          <div class="camera-stage">
+            <video id="cameraVideo" playsinline autoplay muted></video>
+            <canvas id="captureCanvas" hidden></canvas>
+            <div id="cameraPlaceholder" class="camera-placeholder">
+              <div class="big-camera">◉</div>
+              <h2>Kameraet er ikke startet</h2>
+              <p>Giv adgang til kameraet for at tage billeder direkte.</p>
+              <button id="startCamera" class="primary-btn">Start kamera</button>
+            </div>
+            <div class="camera-overlay">
+              <div class="grid-lines"></div>
+            </div>
+          </div>
+          <div class="camera-controls">
+            <div class="mode-tabs">
+              <button class="active">Foto</button><button>Video</button><button>Dokument</button><button>Portræt</button>
+            </div>
+            <div class="control-row">
+              <button id="switchCamera" class="round-control" title="Skift kamera">⟳</button>
+              <button id="captureBtn" class="shutter" title="Tag billede"><i></i></button>
+              <button id="stopCamera" class="round-control" title="Stop kamera">■</button>
+            </div>
+            <div class="camera-options">
+              <label>Blitz <select><option>Automatisk</option><option>Til</option><option>Fra</option></select></label>
+              <label>Format <select><option>4:3</option><option>16:9</option><option>1:1</option></select></label>
+              <label>Kvalitet <select><option>Høj</option><option>Standard</option></select></label>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="view-gallery" class="view">
+        <div class="page-head">
+          <div><span class="eyebrow">GALLERI</span><h1>Dine billeder og videoer</h1></div>
+          <div class="page-actions"><button id="galleryUpload" class="primary-btn">＋ Upload</button></div>
+        </div>
+        <div class="toolbar">
+          <div class="filter-tabs">
+            <button class="active" data-filter="all">Alle</button>
+            <button data-filter="image">Billeder</button>
+            <button data-filter="video">Videoer</button>
+            <button data-filter="favorite">Favoritter</button>
+          </div>
+          <select id="sortMedia" class="select"><option value="newest">Nyeste først</option><option value="oldest">Ældste først</option><option value="name">Navn</option></select>
+        </div>
+        <div id="galleryGrid" class="media-grid large empty-state">Ingen filer endnu. Upload et billede eller tag et med kameraet.</div>
+      </section>
+
+      <section id="view-albums" class="view">
+        <div class="page-head">
+          <div><span class="eyebrow">ALBUM</span><h1>Organisér dine minder</h1></div>
+          <button id="createAlbumBtn" class="primary-btn">＋ Nyt album</button>
+        </div>
+        <div id="albumGrid" class="album-grid"></div>
+      </section>
+
+      <section id="view-places" class="view">
+        <div class="page-head"><div><span class="eyebrow">STEDER</span><h1>Oplev billeder på kortet</h1></div></div>
+        <div class="map-panel">
+          <div class="map-grid"></div>
+          <div class="map-pin p1"><span>3</span></div>
+          <div class="map-pin p2"><span>8</span></div>
+          <div class="map-pin p3"><span>2</span></div>
+          <div class="map-search"><input placeholder="Søg efter sted…"><button class="primary-btn">Søg</button></div>
+          <div class="map-note">Kortvisningen er klar til integration med Google Maps, Mapbox eller OpenStreetMap.</div>
+        </div>
+        <div class="place-list">
+          <article class="place-card"><div class="place-thumb city"></div><div><strong>København</strong><small>Senest besøgt i dag</small></div><span>8 billeder</span></article>
+          <article class="place-card"><div class="place-thumb nature"></div><div><strong>Natur og rejser</strong><small>Flere lokaliteter</small></div><span>5 billeder</span></article>
+        </div>
+      </section>
+
+      <section id="view-favorites" class="view">
+        <div class="page-head"><div><span class="eyebrow">FAVORITTER</span><h1>Dine udvalgte billeder</h1></div></div>
+        <div id="favoriteGrid" class="media-grid large empty-state">Du har endnu ikke markeret nogen favoritter.</div>
+      </section>
+
+      <section id="view-share" class="view">
+        <div class="page-head"><div><span class="eyebrow">DELING</span><h1>Del sikkert og kontrolleret</h1></div></div>
+        <div class="share-layout">
+          <article class="panel form-panel">
+            <h3>Opret delingslink</h3>
+            <label>Vælg indhold<select id="shareContent"><option>Hele galleriet</option><option>Favoritter</option><option>Seneste billeder</option></select></label>
+            <label>Adgang<select><option>Kun visning</option><option>Visning og download</option><option>Visning og kommentarer</option></select></label>
+            <label>Udløber<select><option>Efter 7 dage</option><option>Efter 30 dage</option><option>Udløber ikke</option></select></label>
+            <label class="check"><input type="checkbox" id="passwordToggle"> Beskyt med adgangskode</label>
+            <button id="createShareLink" class="primary-btn">Opret delingslink</button>
+            <div id="shareResult" class="share-result hidden"></div>
+          </article>
+          <article class="panel">
+            <h3>Sikker deling</h3>
+            <ul class="benefit-list">
+              <li><span>✓</span> Du bestemmer, hvem der får adgang</li>
+              <li><span>✓</span> Du kan tilbagekalde linket når som helst</li>
+              <li><span>✓</span> Private filer deles aldrig automatisk</li>
+              <li><span>✓</span> Mulighed for udløbsdato og adgangskode</li>
+            </ul>
+          </article>
+        </div>
+      </section>
+
+      <section id="view-settings" class="view">
+        <div class="page-head"><div><span class="eyebrow">INDSTILLINGER</span><h1>Tilpas MyEye</h1></div></div>
+        <div class="settings-grid">
+          <article class="panel setting-card"><h3>Kamera</h3><label class="switch-row"><span>Gem placering</span><input type="checkbox" checked></label><label class="switch-row"><span>Vis gitterlinjer</span><input type="checkbox" checked></label><label class="switch-row"><span>Automatisk forbedring</span><input type="checkbox"></label></article>
+          <article class="panel setting-card"><h3>Privatliv</h3><label class="switch-row"><span>Privat som standard</span><input type="checkbox" checked></label><label class="switch-row"><span>Skjul metadata ved deling</span><input type="checkbox"></label><label class="switch-row"><span>Lås private album</span><input type="checkbox"></label></article>
+          <article class="panel setting-card"><h3>Lagring</h3><p id="storageDetails">Ingen filer gemt endnu.</p><button id="clearAll" class="danger-btn">Slet alle lokale data</button></article>
+          <article class="panel setting-card"><h3>Om platformen</h3><p>MyEye er en responsiv kamera- og billedplatform bygget som en selvstændig webapp.</p><small>Version 1.0</small></article>
+        </div>
+      </section>
+
+      <footer class="app-footer">
+        <p>MyEye · Udviklet af Mohammed Warrad</p>
+        <p>© 2026 MW Groupe</p>
+      </footer>
+
+    </main>
+
+    <nav class="bottom-nav" aria-label="Mobilnavigation">
+      <button class="active" data-view="home"><span>⌂</span>Hjem</button>
+      <button data-view="camera"><span>◉</span>Kamera</button>
+      <button data-view="gallery"><span>▧</span>Galleri</button>
+      <button id="mobileAdd"><span>＋</span>Opret</button>
+      <button data-view="settings"><span>⚙</span>Profil</button>
+    </nav>
+  </div>
+
+  <input id="fileInput" type="file" accept="image/*,video/*" multiple hidden>
+
+  <dialog id="mediaDialog" class="modal">
+    <button class="modal-close" data-close>×</button>
+    <div id="mediaPreview"></div>
+    <div class="modal-info">
+      <h3 id="mediaTitle"></h3>
+      <p id="mediaMeta"></p>
+      <div class="modal-actions">
+        <button id="favoriteBtn" class="ghost-btn">♡ Favorit</button>
+        <button id="downloadBtn" class="ghost-btn">Hent</button>
+        <button id="deleteBtn" class="danger-btn">Slet</button>
+      </div>
+    </div>
+  </dialog>
+
+  <dialog id="albumDialog" class="modal small">
+    <form method="dialog" id="albumForm">
+      <button class="modal-close" value="cancel">×</button>
+      <h2>Opret nyt album</h2>
+      <label>Albummets navn<input id="albumName" required placeholder="Fx Ferie 2026"></label>
+      <label>Beskrivelse<textarea id="albumDescription" rows="3" placeholder="Kort beskrivelse"></textarea></label>
+      <div class="modal-actions"><button value="cancel" class="ghost-btn">Annuller</button><button value="default" class="primary-btn">Opret album</button></div>
+    </form>
+  </dialog>
+
+  <div id="toast" class="toast" role="status"></div>
+  <script src="assets/app.js"></script>
+</body>
+</html>

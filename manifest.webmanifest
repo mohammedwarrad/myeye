@@ -1,0 +1,11 @@
+{
+  "name": "MyEye – Kamera og billedplatform",
+  "short_name": "MyEye",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#061126",
+  "theme_color": "#071226",
+  "description": "MyEye – kamera, billeder, video, galleri, album, steder, favoritter og sikker deling samlet i én visuel platform.",
+  "icons": [],
+  "scope": "./"
+}
