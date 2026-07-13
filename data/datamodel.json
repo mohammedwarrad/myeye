@@ -1,0 +1,26 @@
+{
+  "media": {
+    "id": "uuid",
+    "name": "string",
+    "type": "mime",
+    "size": "number",
+    "created": "timestamp",
+    "favorite": "boolean",
+    "data": "data-url"
+  },
+  "album": {
+    "id": "uuid",
+    "name": "string",
+    "description": "string",
+    "created": "timestamp"
+  },
+  "future_backend": [
+    "users",
+    "roles",
+    "projects",
+    "places",
+    "shares",
+    "audit_log",
+    "versions"
+  ]
+}
